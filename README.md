@@ -157,19 +157,37 @@ The system automatically retrieves relevant entries based on keyword matching an
 
 ### Option A: Vercel (Frontend) + Render (Backend)
 
-**Backend on Render:**
-1. Push to GitHub
-2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your repo, select Python runtime
-4. Build command: `pip install -r backend/requirements.txt`
-5. Start command: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
-6. Add environment variables: `LLM_PROVIDER=groq`, `GROQ_API_KEY=your-key`
+This setup supports **auto deploy from GitHub** by default.
 
-**Frontend on Vercel:**
-1. Go to [vercel.com](https://vercel.com) → Import Project
-2. Set root directory to `frontend`
-3. Add environment variable: `VITE_API_URL=https://your-app.onrender.com`
-4. Deploy
+**1) Deploy backend on Render (auto deploy enabled):**
+1. Push this repo to GitHub.
+2. Go to [render.com](https://render.com) → **New** → **Blueprint**.
+3. Select your GitHub repo and use `render.yaml` from this project.
+4. In Render env vars, set at least:
+  - `GROQ_API_KEY=your-key`
+  - (optional) change `LLM_PROVIDER` / model variables
+5. Click **Apply** and wait until the service is live.
+6. Copy your backend URL, for example `https://ai-chatbot-api.onrender.com`.
+
+**2) Deploy frontend on Vercel (auto deploy enabled):**
+1. Go to [vercel.com](https://vercel.com) → **Add New Project**.
+2. Import the same GitHub repo.
+3. Set **Root Directory** to `frontend`.
+4. Add environment variable:
+  - `VITE_API_URL=https://your-render-backend-url.onrender.com`
+5. Deploy.
+
+**3) Final CORS step on Render:**
+1. Open your Render service settings.
+2. Update `CORS_ORIGINS` to include your Vercel domain and local dev, for example:
+  - `https://your-project.vercel.app,http://localhost:5173`
+3. Save and redeploy if prompted.
+
+After this one-time setup, every push to your connected GitHub branch (usually `main`) automatically triggers:
+- Render backend redeploy
+- Vercel frontend redeploy
+
+No manual production upload is needed from VS Code once GitHub integration is connected.
 
 ### Option B: AWS Free Tier
 

@@ -6,8 +6,10 @@ services:
     name: ai-chatbot-api
     runtime: python
     region: oregon
+    autoDeploy: true
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
     envVars:
       - key: LLM_PROVIDER
         value: groq
