@@ -1,0 +1,20 @@
+# Render deployment configuration
+# Deploy the backend as a Web Service on Render
+
+services:
+  - type: web
+    name: ai-chatbot-api
+    runtime: python
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: CORS_ORIGINS
+        value: https://your-app.vercel.app,http://localhost:5173
+    plan: free
